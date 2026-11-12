@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BacPlan</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#14264A">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+:root{--bg:#F3F5F8;--card:#fff;--fg:#14264A;--mut:#5B6678;--bd:#DCE1E9;--g:#1F5A3E;--gt:#1F5A3E;--n:#14264A;--o:#C9A227;--gc:#E3F1E8;--nc:#DCE4F4;--pc:#FBF0CC;--rc:#FBE1D3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1524;--card:#18223A;--fg:#EEF1F6;--mut:#9CA8BC;--bd:#2A3552;--gt:#6FD3A0;--gc:#1B3A2C;--nc:#222F55;--pc:#3A3317;--rc:#4A2A1C}}
+:root[data-theme="dark"]{--bg:#0E1524;--card:#18223A;--fg:#EEF1F6;--mut:#9CA8BC;--bd:#2A3552;--gt:#6FD3A0;--gc:#1B3A2C;--nc:#222F55;--pc:#3A3317;--rc:#4A2A1C}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
+.app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:var(--bg)}
+.top{background:#14264A;color:#fff;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--o)}
+.top b{font-size:20px;font-weight:700;letter-spacing:.2px}.top b i{color:var(--o);font-style:normal}
+.fl{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.13);padding:4px 11px;border-radius:99px;font-weight:600;font-size:14px}
+.main{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch}
+nav{display:grid;grid-template-columns:repeat(5,1fr);background:var(--card);border-top:1px solid var(--bd)}
+nav button{border:0;background:none;color:var(--mut);padding:8px 0 7px;font:inherit;font-size:10.5px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0}
+nav button svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--gt);font-weight:700}
+h2{font-size:13px;color:var(--mut);margin:16px 2px 7px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
+.hero{background:var(--g);color:#fff;border-radius:18px;padding:16px;margin:12px 0}
+.hero small{opacity:.85}.hero .t{font-size:22px;font-weight:700;line-height:1.2;margin:3px 0 12px}
+.btn{border:0;background:var(--o);color:#14264A;font:inherit;font-weight:700;padding:10px 18px;border-radius:99px;cursor:pointer}
+.b2{background:var(--card);color:var(--fg);border:1px solid var(--bd);font-weight:600}
+.tl{display:flex;gap:10px;margin-bottom:7px}
+.tm{width:46px;text-align:right;font-weight:700;font-size:13px;padding-top:11px;color:var(--mut)}
+.tk{flex:1;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-left:5px solid;border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.c{border-left-color:var(--g)}.w{border-left-color:var(--n)}.p{border-left-color:var(--o)}.f{border-left-style:dashed;border-left-color:#5C7BB5}
+.tk.d{background:var(--gc)}.tk.d .n{text-decoration:line-through;opacity:.7}
+.tk.now{box-shadow:0 0 0 2px var(--o)}
+.tk .n{flex:1}.tk small{color:var(--mut)}
+.ck{width:22px;height:22px;border:2px solid var(--bd);border-radius:50%;flex:none;display:grid;place-items:center;font-size:13px;color:#fff}
+.d .ck{background:var(--g);border-color:var(--g)}
+.chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--o);color:#14264A}.chip.l{background:var(--rc);color:var(--fg)}
+.seg{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto}
+.seg button{flex:1;border:1px solid var(--bd);background:var(--card);color:var(--fg);padding:8px 0;border-radius:99px;font:inherit;font-size:13px;cursor:pointer;min-width:44px}
+.seg button.on{background:var(--g);color:#fff;border-color:var(--g);font-weight:700}
+.bar{height:9px;border-radius:5px;background:var(--bd);overflow:hidden}.bar i{display:block;height:100%;border-radius:5px;background:var(--g)}
+.bar i.m{background:var(--o)}
+.cols{display:flex;align-items:flex-end;gap:7px;height:96px}.cols div{flex:1;text-align:center;font-size:11px;color:var(--mut)}.cols i{display:block;border-radius:5px 5px 0 0;background:var(--g);margin-bottom:3px}
+input,select{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px;min-width:0;width:100%}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.big{font-size:44px;font-weight:800;color:var(--gt);line-height:1}
+.mut{color:var(--mut);font-size:13px}
+.x{border:0;background:none;color:var(--mut);font-size:20px;cursor:pointer;padding:0 4px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><b>Bac<i>Plan</i></b><span class="fl" id="fl"></span></div>
+  <div class="main" id="main"></div>
+  <nav id="nav"></nav>
+</div>
+<script>
+var KEY="bp1",S=null,seg=0,tmr=null,secs=0,rst=false;
+var SUBJ=["Maths","Physique","Chimie","Français","Anglais","Philosophie","Économie"];
+var OFF=[1,3,7,14],DN=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+var E="6:40,20,Anglais 20 min,p";
+var DEF=[
+[E,"8:00,240,Maths,c","12:00,120,Philosophie,c","15:00,120,Révision Maths,c","19:00,45,Philo : rappel,w","20:00,60,Maths : exercices,w","22:30,15,Coucher,p"],
+[E,"8:00,240,Maths,c","13:00,60,Physique : exercices,w","15:00,240,Physique,c","22:45,15,Coucher,p"],
+[E,"8:00,120,Économie,c","10:20,100,Révisions libres,f","14:30,90,Enseignement,p","17:00,45,Sport,p","19:00,90,Physique : exercices,w","21:00,45,Maths + Français,w","22:30,15,Coucher,p"],
+[E,"8:00,120,Physique : exercices,f","10:00,120,Chimie · Philo,f","12:00,120,Français,c","15:00,240,Physique,c","22:45,15,Coucher,p"],
+[E,"8:00,120,Français,c","10:00,120,Anglais,c","13:00,60,Physique : exercices,w","14:00,30,Français : rappel,w","15:00,240,Chimie,c","22:45,15,Coucher,p"],
+[E,"8:00,120,Chimie,c","10:00,120,Révision,c","12:00,120,Anglais,c","15:30,90,Physique + Maths,w","17:00,45,Sport,p","20:00,120,Étude + petits frères,p","22:00,120,Longrich,p"],
+["11:00,20,Anglais 20 min,p","11:30,45,Sport doux,p","14:00,60,Rattrapage,w","15:00,120,Enseignement,p","20:00,60,Matière du lundi,w","21:00,30,Bilan de la semaine,w","22:30,15,Coucher,p"]];
+function K(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function D0(k){return new Date(k+"T00:00:00")}
+function wd(d){return(d.getDay()+6)%7}
+function MIN(t){var a=t.split(":");return+a[0]*60+ +a[1]}
+function HM(m){return Math.floor(m/60)+"h"+("0"+m%60).slice(-2)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+ if(!S){S={tab:0,start:K(new Date()),goal:80,nid:1,tpl:[],done:{},grace:{},rap:[],theme:"",pd:wd(new Date())};
+  DEF.forEach(function(day){S.tpl.push(day.map(function(x){var p=x.split(",");return{id:S.nid++,s:MIN(p[0]),d:+p[1],n:p[2],k:p[3]}}))});save()}
+ S.lead=S.lead||10;if(S.theme)document.documentElement.setAttribute("data-theme",S.theme)}
+function man(d){return S.tpl[wd(d)].filter(function(t){return t.k!="f"})}
+function st(d){var k=K(d),dn=S.done[k]||{},m=man(d);return[m.filter(function(t){return dn[t.id]}).length,m.length]}
+function per(from,to){var a=0,b=0,m={},e=new Date();e.setHours(0,0,0,0);var s=D0(S.start);var d=new Date(Math.max(from,s));d.setHours(0,0,0,0);
+ for(var i=0;i<400&&d<=to&&d<=e;i++){var k=K(d);if(!S.grace[k]){var dn=S.done[k]||{};man(d).forEach(function(x){b++;var y=dn[x.id]?1:0;a+=y;var q=m[x.n]||(m[x.n]=[0,0]);q[0]+=y;q[1]++})}d.setDate(d.getDate()+1)}
+ return{a:a,b:b,m:m}}
+function streak(){var c=0,d=new Date();d.setHours(0,0,0,0);var s=st(d);if(!(s[1]&&s[0]/s[1]*100>=S.goal))d.setDate(d.getDate()-1);
+ for(var i=0;i<400;i++){var k=K(d);if(k<S.start)break;if(S.grace[k]){d.setDate(d.getDate()-1);continue}var v=st(d);if(!v[1]||v[0]/v[1]*100<S.goal)break;c++;d.setDate(d.getDate()-1)}return c}
+function ring(p,sz){var c=2*Math.PI*34;return'<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--bd)" stroke-width="9"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--g)" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+(c*(1-p/100)).toFixed(1)+'" transform="rotate(-90 42 42)"/><text x="42" y="48" text-anchor="middle" font-size="19" font-weight="800" fill="var(--fg)">'+p+'%</text></svg>'}
+function vToday(){
+ var now=new Date(),nm=now.getHours()*60+now.getMinutes(),key=K(now),dn=S.done[key]||{};
+ var T=S.tpl[wd(now)].slice().sort(function(a,b){return a.s-b.s}),M=T.filter(function(t){return t.k!="f"});
+ var dc=M.filter(function(t){return dn[t.id]}).length,p=M.length?Math.round(dc/M.length*100):0;
+ var cu=M.filter(function(t){return!dn[t.id]&&nm>=t.s&&nm<t.s+t.d})[0],nx=M.filter(function(t){return!dn[t.id]&&t.s>nm})[0],h;
+ if(cu)h='<small>En cours maintenant</small><div class="t">'+cu.n+'</div><small>jusqu’à '+HM(cu.s+cu.d)+'</small><div style="margin-top:12px"><button class="btn" data-a="go">Je suis dessus</button></div>';
+ else if(nx)h='<small>Prochaine tâche, dans '+Math.floor((nx.s-nm)/60)+' h '+(nx.s-nm)%60+' min</small><div class="t">'+HM(nx.s)+' · '+nx.n+'</div><button class="btn" data-a="go">Je commence</button>';
+ else h=M.length?'<div class="t">Journée terminée</div><small>Prépare ton sommeil.</small>':'<div class="t">Rien de prévu</div><small>Ajoute des tâches dans Planning.</small>';
+ var mo=key.slice(0,7),gu=Object.keys(S.grace).filter(function(k){return k.slice(0,7)==mo}).length;
+ var o='<div class="row"><div style="flex:1"><div class="mut">'+DN[wd(now)]+" "+now.getDate()+"/"+(now.getMonth()+1)+'</div><div style="font-size:20px;font-weight:700">Mon plan du jour</div></div>'+ring(p,84)+'</div><div class="mut">'+dc+" sur "+M.length+" tâches · objectif "+S.goal+" %</div><div class=\"hero\">"+h+"</div>";
+ T.forEach(function(t){var d=dn[t.id],late=!d&&t.k!="f"&&nm>=t.s+t.d,nw=!d&&t.k!="f"&&nm>=t.s&&nm<t.s+t.d;
+  o+='<div class="tl"><div class="tm">'+HM(t.s)+'</div><button class="tk '+t.k+(d?" d":"")+(nw?" now":"")+'" data-a="t" data-id="'+t.id+'"><span class="ck">'+(d?"✓":"")+'</span><span class="n">'+t.n+(t.k=="f"?" (facultatif)":"")+'<br><small>'+t.d+' min</small></span>'+(nw?'<span class="chip">maintenant</span>':late?'<span class="chip l">à rattraper</span>':"")+'</button></div>'});
+ o+='<div class="row" style="margin-top:10px"><button class="btn b2" data-a="grace"'+(gu?" disabled":"")+'>Jour de grâce</button><span class="mut">'+(gu?"Utilisé ce mois-ci.":"1 par mois : ta série reste intacte.")+'</span></div>';return o}
+function vPlan(){var di=S.pd,T=S.tpl[di].slice().sort(function(a,b){return a.s-b.s});
+ var o='<div class="seg">';DN.forEach(function(n,i){o+='<button class="'+(i==di?"on":"")+'" data-a="pd" data-i="'+i+'">'+n+'</button>'});o+='</div>';
+ T.forEach(function(t){o+='<div class="tl"><div class="tm">'+HM(t.s)+'</div><div class="tk '+t.k+'" style="cursor:default"><span class="n">'+t.n+'<br><small>'+t.d+' min</small></span><button class="x" data-a="del" data-id="'+t.id+'" aria-label="Supprimer">×</button></div></div>'});
+ o+='<h2>Ajouter une tâche</h2><div class="card"><div class="g2"><input id="ts" type="time" value="18:00"><input id="td" type="number" min="5" step="5" value="45" aria-label="Durée en minutes"></div><input id="tn" placeholder="Nom de la tâche" style="margin-bottom:8px"><select id="tk"><option value="w">Travail personnel</option><option value="c">Cours</option><option value="p">Activité perso</option><option value="f">Facultatif</option></select><div style="margin-top:10px"><button class="btn" data-a="add">Ajouter à '+DN[di]+'</button></div></div>';
+ o+='<h2>Mon plan B</h2><div class="card mut">Si un cours finit tard, alors je mange, je me repose et je ne fais pas de travail intensif. Si je rate un créneau, alors je le décale ce soir sans perdre ma série.</div>';return o}
+function vRev(){var tk=K(new Date()),L=[];
+ S.rap.forEach(function(r,i){var ix=r.s.indexOf(0),d=null;if(ix>=0){d=D0(r.d);d.setDate(d.getDate()+OFF[ix])}L.push({r:r,i:i,ix:ix,k:d?K(d):"9"})});
+ L.sort(function(a,b){return a.k<b.k?-1:1});
+ var o='<h2>Ajouter une leçon étudiée</h2><div class="card"><div class="g2"><select id="rm">'+SUBJ.map(function(s){return"<option>"+s+"</option>"}).join("")+'</select><input id="rl" placeholder="Leçon"></div><button class="btn" data-a="radd">Ajouter</button></div><h2>Rappels à faire (cahier fermé d’abord)</h2>';
+ if(!L.length)o+='<div class="card mut">Étudie une leçon, ajoute-la ici : BacPlan te dit quand la réviser (J+1, J+3, J+7, J+14).</div>';
+ L.forEach(function(x){var r=x.r,due=x.ix>=0&&x.k<=tk,late=x.ix>=0&&x.k<tk;
+  o+='<div class="card"><div class="row sp"><b>'+(r.l||"Leçon")+'</b><span class="chip" style="background:var(--nc);color:var(--fg)">'+r.m+'</span></div>';
+  if(x.ix<0)o+='<div class="mut" style="margin-top:6px">Terminé : 4 rappels faits.</div>';
+  else if(due)o+='<div class="mut" style="margin:6px 0">Rappel J+'+OFF[x.ix]+(late?" · à rattraper":" · aujourd’hui")+'. Explique sans regarder.</div><div class="row"><button class="btn" data-a="rok" data-i="'+x.i+'">Je savais</button><button class="btn b2" data-a="rko" data-i="'+x.i+'">Oublié</button></div>';
+  else o+='<div class="mut" style="margin-top:6px">Prochain rappel J+'+OFF[x.ix]+' le '+x.k.slice(8)+"/"+x.k.slice(5,7)+'</div>';o+='</div>'});
+ o+='<h2>Mode focus : un exercice (objectif 45 min)</h2><div class="card" style="text-align:center"><div class="big" id="tm" style="color:var(--fg)">'+fmt(secs)+'</div><div class="bar" style="margin:10px 0"><i id="pb" style="width:'+Math.min(100,secs/27)+'%"></i></div><button class="btn" data-a="tm">'+(tmr?"Pause":"Démarrer")+'</button> <button class="btn b2" data-a="tz">Zéro</button><div class="mut" style="margin-top:10px">1 Essayer seul · 2 Repérer le blocage · 3 Indice ciblé · 4 Refaire sans aide · 5 Corriger</div></div>';return o}
+function fmt(s){return("0"+Math.floor(s/60)).slice(-2)+":"+("0"+s%60).slice(-2)}
+function vStats(){var n=new Date();n.setHours(0,0,0,0);var f=[new Date(n),new Date(n),new Date(n),new Date(n),D0(S.start)];
+ f[1].setDate(n.getDate()-wd(n));f[2].setDate(1);f[3]=new Date(n.getFullYear(),Math.floor(n.getMonth()/3)*3,1);
+ var P=per(f[seg],n),p=P.b?Math.round(P.a/P.b*100):0,names=["Jour","Semaine","Mois","Trimestre","Année"];
+ var o='<div class="seg">'+names.map(function(x,i){return'<button class="'+(i==seg?"on":"")+'" data-a="sg" data-i="'+i+'">'+(x=="Trimestre"?"Trim.":x)+'</button>'}).join("")+'</div>';
+ o+='<div class="card" style="text-align:center"><div class="big">'+(P.b?p+" %":"–")+'</div><div class="mut" style="margin-top:6px">'+P.a+" tâches faites sur "+P.b+(p>=S.goal?" · objectif atteint":"")+'</div></div><h2>7 derniers jours</h2><div class="card"><div class="cols">';
+ for(var i=6;i>=0;i--){var d=new Date(n);d.setDate(n.getDate()-i);var s=st(d),v=s[1]?Math.round(s[0]/s[1]*100):0;o+='<div><i style="height:'+Math.max(3,v*.78)+'px;'+(v<S.goal?"background:var(--o)":"")+'"></i>'+DN[wd(d)][0]+'</div>'}
+ o+='</div></div><h2>Régularité par tâche (à renforcer en premier)</h2><div class="card">';
+ var ks=Object.keys(P.m).sort(function(a,b){return P.m[a][0]/P.m[a][1]-P.m[b][0]/P.m[b][1]}).slice(0,6);
+ if(!ks.length)o+='<span class="mut">Coche des tâches dans Aujourd’hui pour voir tes résultats.</span>';
+ ks.forEach(function(k){var q=P.m[k],v=Math.round(q[0]/q[1]*100);o+='<div style="margin-bottom:9px"><div class="row sp"><span>'+k+'</span><b>'+v+' %</b></div><div class="bar"><i class="'+(v<S.goal?"m":"")+'" style="width:'+v+'%"></i></div></div>'});
+ return o+'</div>'}
+function vMe(){var P=per(D0(S.start),new Date());
+ return'<div class="card"><div class="row sp"><b>Objectif du jour</b><b id="gv">'+S.goal+' %</b></div><input id="goal" type="range" min="50" max="100" step="5" value="'+S.goal+'"></div>'+
+ '<div class="card"><div class="row sp"><span>Série en cours</span><b>'+streak()+' jours</b></div></div>'+
+ '<div class="card"><div class="mut" style="margin-bottom:6px">Début du suivi</div><input id="sd" type="date" value="'+S.start+'"></div>'+
+ '<div class="row"><button class="btn" data-a="share">Partager mon bilan</button><button class="btn b2" data-a="theme">Thème '+(S.theme=="dark"?"clair":"sombre")+'</button></div>'+
+ '<h2>Rappels</h2><div class="card"><div class="row sp"><span>Notifications</span><button class="btn b2" data-a="notif">'+(S.notif?"Désactiver":"Activer")+'</button></div><div class="row sp" style="margin-top:10px"><span>Prévenir avant</span><select id="lead" style="width:auto">'+[5,10,15,30].map(function(m){return"<option value=\""+m+"\""+(S.lead==m?" selected":"")+">"+m+" min</option>"}).join("")+'</select></div><div class="mut" style="margin-top:8px">Les notifications arrivent quand BacPlan est ouvert ou récemment utilisé. Pour des alarmes fiables, même téléphone verrouillé, exporte vers ton agenda.</div></div><div class="card"><div class="mut" style="margin-bottom:8px">Ton agenda reçoit toute ta semaine, avec une alarme avant chaque tâche.</div><button class="btn" data-a="ics">Exporter vers l’agenda</button></div><h2>Données</h2><div class="card mut">Tout reste sur ton téléphone, sans compte. Fais une sauvegarde de temps en temps.</div><div class="row"><button class="btn b2" data-a="bk">Sauvegarder</button><label class="btn b2" style="cursor:pointer">Restaurer<input id="rf" type="file" accept=".json" hidden></label></div><div style="margin-top:10px"><button class="btn b2" data-a="reset">'+(rst?"Confirmer : tout effacer":"Réinitialiser BacPlan")+'</button></div>'}
+var IC=['<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>','<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>','<path d="M17 2l4 4-4 4M3 11V10a4 4 0 014-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 01-4 4H3"/>','<path d="M5 20V10M12 20V4M19 20v-7"/>','<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'];
+var LB=["Jour","Planning","Réviser","Bilans","Moi"];
+function render(top){var m=document.getElementById("main"),y=m.scrollTop;
+ m.innerHTML=[vToday,vPlan,vRev,vStats,vMe][S.tab]();
+ document.getElementById("nav").innerHTML=LB.map(function(l,i){return'<button class="'+(i==S.tab?"on":"")+'" data-a="tab" data-i="'+i+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+IC[i]+'</svg>'+l+'</button>'}).join("");
+ document.getElementById("fl").innerHTML="🔥 "+streak();m.scrollTop=top?0:y}
+document.addEventListener("click",function(e){var a=e.target.closest("[data-a]");if(!a||a.disabled)return;var x=a.dataset,k=K(new Date()),i=+x.i;
+ switch(x.a){
+ case"tab":S.tab=i;save();render(true);return;
+ case"go":S.tab=2;save();render(true);return;
+ case"t":var dn=S.done[k]||(S.done[k]={});if(dn[x.id])delete dn[x.id];else dn[x.id]=1;break;
+ case"grace":S.grace[k]=1;break;
+ case"pd":S.pd=i;break;
+ case"del":S.tpl[S.pd]=S.tpl[S.pd].filter(function(t){return t.id!=x.id});break;
+ case"add":var n=document.getElementById("tn").value.trim();if(!n)return;S.tpl[S.pd].push({id:S.nid++,s:MIN(document.getElementById("ts").value||"18:00"),d:+document.getElementById("td").value||30,n:n,k:document.getElementById("tk").value});break;
+ case"radd":var l=document.getElementById("rl").value.trim();if(!l)return;S.rap.push({m:document.getElementById("rm").value,l:l,d:k,s:[0,0,0,0]});break;
+ case"rok":var r=S.rap[i];r.s[r.s.indexOf(0)]=1;break;
+ case"rko":S.rap[i].s=[0,0,0,0];S.rap[i].d=k;break;
+ case"tm":if(tmr){clearInterval(tmr);tmr=null}else{tmr=setInterval(function(){secs++;var t=document.getElementById("tm"),p=document.getElementById("pb");if(t)t.textContent=fmt(secs);if(p)p.style.width=Math.min(100,secs/27)+"%"},1000)}break;
+ case"tz":secs=0;if(tmr){clearInterval(tmr);tmr=null}break;
+ case"sg":seg=i;break;
+ case"notif":if(S.notif){S.notif=false;break}if(window.Notification){Notification.requestPermission().then(function(p){S.notif=p=="granted";save();render(false)})}return;
+ case"ics":ics();return;
+ case"bk":dl(JSON.stringify(S),"bacplan-sauvegarde.json","application/json");return;
+ case"theme":S.theme=S.theme=="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",S.theme);break;
+ case"share":var n2=new Date();n2.setHours(0,0,0,0);var w=new Date(n2);w.setDate(n2.getDate()-wd(n2));var A=per(w,n2),B=per(D0(S.start),n2);
+  var tx="BacPlan : cette semaine "+(A.b?Math.round(A.a/A.b*100):0)+" %, depuis le début "+(B.b?Math.round(B.a/B.b*100):0)+" %, série de "+streak()+" jours.";
+  try{if(navigator.share)navigator.share({text:tx});else navigator.clipboard.writeText(tx)}catch(er){}return;
+ case"reset":if(!rst){rst=true;break}try{localStorage.removeItem(KEY)}catch(er){}rst=false;load();break;}
+ save();render(false)});
+document.addEventListener("input",function(e){if(e.target.id=="goal"){S.goal=+e.target.value;document.getElementById("gv").textContent=S.goal+" %";save()}});
+document.addEventListener("change",function(e){var t=e.target;
+ if(t.id=="sd"&&t.value){S.start=t.value;save();render(false)}
+ if(t.id=="lead"){S.lead=+t.value;save()}
+ if(t.id=="rf"&&t.files[0]){var fr=new FileReader();fr.onload=function(){try{var o=JSON.parse(fr.result);if(o&&o.tpl){S=o;save();render(true)}}catch(er){}};fr.readAsText(t.files[0])}});
+var sent={};
+function dl(txt,name,type){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function ics(){var p=function(n){return("0"+n).slice(-2)},f=function(m){return p(Math.floor(m/60))+p(m%60)+"00"},BD=["MO","TU","WE","TH","FR","SA","SU"],t0=new Date(),L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//BacPlan//FR"];
+ S.tpl.forEach(function(day,i){day.forEach(function(t){var d=new Date(t0);d.setDate(t0.getDate()+(i-wd(t0)+7)%7);var y=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate()),n=t.n.replace(/[,;]/g," ");
+  L.push("BEGIN:VEVENT","UID:bp"+t.id+"@bacplan","DTSTAMP:"+y+"T000000","DTSTART:"+y+"T"+f(t.s),"DTEND:"+y+"T"+f(Math.min(t.s+t.d,1439)),"RRULE:FREQ=WEEKLY;BYDAY="+BD[i],"SUMMARY:"+n,"BEGIN:VALARM","TRIGGER:-PT"+S.lead+"M","ACTION:DISPLAY","DESCRIPTION:"+n,"END:VALARM","END:VEVENT")})});
+ L.push("END:VCALENDAR");dl(L.join("\r\n"),"bacplan-agenda.ics","text/calendar")}
+function ping(t,b){try{if(navigator.serviceWorker&&navigator.serviceWorker.ready){navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:"icon-192.png"})});return}}catch(e){}try{new Notification(t,{body:b})}catch(e){}}
+function tick(){if(!S.notif||!window.Notification||Notification.permission!="granted")return;var n=new Date(),nm=n.getHours()*60+n.getMinutes(),k=K(n),dn=S.done[k]||{};
+ S.tpl[wd(n)].forEach(function(t){var id=k+t.id;if(!sent[id]&&!dn[t.id]&&t.k!="f"&&nm>=t.s-S.lead&&nm<t.s+5){sent[id]=1;ping(t.n,"À "+HM(t.s)+" · "+t.d+" min")}})}
+setInterval(tick,30000);
+if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+load();render(true);tick();
+</script>
+</body>
+</html>
