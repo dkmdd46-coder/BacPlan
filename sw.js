@@ -1,5 +1,5 @@
-var C="bacplan-v3",F=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png"];
-self.addEventListener("install",function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(F)}));self.skipWaiting()});
+var C="bacplan-v4",F=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png"];
+self.addEventListener("install",function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(F).then(function(){return c.add("pack-maths-suites.json").catch(function(){})})}));self.skipWaiting()});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!=C}).map(function(x){return caches.delete(x)}))}));self.clients.claim()});
 self.addEventListener("fetch",function(e){if(e.request.method!="GET")return;e.respondWith(fetch(e.request).then(function(n){var c=n.clone();caches.open(C).then(function(x){x.put(e.request,c)});return n}).catch(function(){return caches.match(e.request).then(function(r){return r||caches.match("index.html")})}))});
 self.addEventListener("notificationclick",function(e){e.notification.close();e.waitUntil(clients.matchAll({type:"window"}).then(function(l){return l.length?l[0].focus():clients.openWindow("./")}))});
