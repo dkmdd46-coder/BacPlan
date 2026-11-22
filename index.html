@@ -65,15 +65,16 @@ input,select{font:inherit;color:var(--fg);background:var(--card);border:1px soli
 var KEY="bp1",S=null,seg=0,tmr=null,secs=0,rst=false;
 var SUBJ=["Maths","Physique","Chimie","Français","Anglais","Philosophie","Économie"];
 var OFF=[1,3,7,14],DN=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
-var E="6:40,20,Anglais 20 min,p";
-var DEF=[
-[E,"8:00,240,Maths,c","12:00,120,Philosophie,c","15:00,120,Révision Maths,c","19:00,45,Philo : rappel,w","20:00,60,Maths : exercices,w","22:30,15,Coucher,p"],
-[E,"8:00,240,Maths,c","13:00,60,Physique : exercices,w","15:00,240,Physique,c","22:45,15,Coucher,p"],
-[E,"8:00,120,Économie,c","10:20,100,Révisions libres,f","14:30,90,Enseignement,p","17:00,45,Sport,p","19:00,90,Physique : exercices,w","21:00,45,Maths + Français,w","22:30,15,Coucher,p"],
-[E,"8:00,120,Physique : exercices,f","10:00,120,Chimie · Philo,f","12:00,120,Français,c","15:00,240,Physique,c","22:45,15,Coucher,p"],
-[E,"8:00,120,Français,c","10:00,120,Anglais,c","13:00,60,Physique : exercices,w","14:00,30,Français : rappel,w","15:00,240,Chimie,c","22:45,15,Coucher,p"],
-[E,"8:00,120,Chimie,c","10:00,120,Révision,c","12:00,120,Anglais,c","15:30,90,Physique + Maths,w","17:00,45,Sport,p","20:00,120,Étude + petits frères,p","22:00,120,Longrich,p"],
-["11:00,20,Anglais 20 min,p","11:30,45,Sport doux,p","14:00,60,Rattrapage,w","15:00,120,Enseignement,p","20:00,60,Matière du lundi,w","21:00,30,Bilan de la semaine,w","22:30,15,Coucher,p"]];
+var VER=3,PK="sm";
+function esc(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return"&#"+c.charCodeAt(0)+";"})}
+function TPL(id){var Z={sm:["Maths","Physique","Chimie","Français","Anglais","Philosophie","Économie"],se:["SVT","Physique","Chimie","Maths","Français","Anglais","Philosophie"],ss:["Économie","Histoire-Géo","Philosophie","Maths","Français","Anglais","Sociologie"]}[id],out=[];
+ for(var i=0;i<7;i++){var L=[];
+  if(id=="vide"){out.push(L);continue}
+  if(id=="pro"){L.push("6:40,20,Apprentissage 20 min,p");if(i<5)L.push("8:00,120,Travail profond,w","10:30,90,Clients et réunions,c","14:00,120,Tâches importantes,w");if(i==0||i==2||i==4)L.push("17:30,45,Sport,p");L.push(i==6?"20:00,30,Planifier la semaine,w":"21:00,20,Bilan du jour,w","22:30,15,Coucher,p")}
+  else{L.push("6:40,20,Anglais 20 min,p");if(i<6)L.push("8:00,240,Cours (à adapter),c","17:30,60,"+Z[i]+" : exercices,w","19:00,45,"+Z[(i+3)%7]+" : révision,w");else L.push("17:00,60,"+Z[0]+" : rattrapage,w");
+   if(i==0||i==2||i==5)L.push("16:30,45,Sport,p");L.push(i==6?"20:30,30,Bilan de la semaine,w":"21:15,20,Rappels J+ (Réviser),w","22:30,15,Coucher,p")}
+  out.push(L)}return out}
+function applyT(id){S.tpl=TPL(id).map(function(day){return day.map(function(x){var p=x.split(",");return{id:S.nid++,s:MIN(p[0]),d:+p[1],n:p[2],k:p[3]}})});S.serie=id}
 function K(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function D0(k){return new Date(k+"T00:00:00")}
 function wd(d){return(d.getDay()+6)%7}
@@ -82,8 +83,8 @@ function HM(m){return Math.floor(m/60)+"h"+("0"+m%60).slice(-2)}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
  if(!S){S={tab:0,start:K(new Date()),goal:80,nid:1,tpl:[],done:{},grace:{},rap:[],theme:"",pd:wd(new Date())};
-  DEF.forEach(function(day){S.tpl.push(day.map(function(x){var p=x.split(",");return{id:S.nid++,s:MIN(p[0]),d:+p[1],n:p[2],k:p[3]}}))});save()}
- S.lead=S.lead||10;if(S.theme)document.documentElement.setAttribute("data-theme",S.theme)}
+  S.onb=1;save()}
+ S.lead=S.lead||10;if((S.v||1)<3){S.name=S.name||"";S.serie=S.serie||"perso";S.bac=S.bac||"";S.gmax=S.gmax||1;S.v=3;save()}if(S.theme)document.documentElement.setAttribute("data-theme",S.theme)}
 function man(d){return S.tpl[wd(d)].filter(function(t){return t.k!="f"})}
 function st(d){var k=K(d),dn=S.done[k]||{},m=man(d);return[m.filter(function(t){return dn[t.id]}).length,m.length]}
 function per(from,to){var a=0,b=0,m={},e=new Date();e.setHours(0,0,0,0);var s=D0(S.start);var d=new Date(Math.max(from,s));d.setHours(0,0,0,0);
@@ -94,17 +95,17 @@ function streak(){var c=0,d=new Date();d.setHours(0,0,0,0);var s=st(d);if(!(s[1]
 function ring(p,sz){var c=2*Math.PI*34;return'<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--bd)" stroke-width="9"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--g)" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+(c*(1-p/100)).toFixed(1)+'" transform="rotate(-90 42 42)"/><text x="42" y="48" text-anchor="middle" font-size="19" font-weight="800" fill="var(--fg)">'+p+'%</text></svg>'}
 function vToday(){
  var now=new Date(),nm=now.getHours()*60+now.getMinutes(),key=K(now),dn=S.done[key]||{};
- var T=S.tpl[wd(now)].slice().sort(function(a,b){return a.s-b.s}),M=T.filter(function(t){return t.k!="f"});
+ var T=S.tpl[wd(now)].filter(function(t){return!(S.nof&&t.k=="f")}).sort(function(a,b){return a.s-b.s}),M=T.filter(function(t){return t.k!="f"});
  var dc=M.filter(function(t){return dn[t.id]}).length,p=M.length?Math.round(dc/M.length*100):0;
  var cu=M.filter(function(t){return!dn[t.id]&&nm>=t.s&&nm<t.s+t.d})[0],nx=M.filter(function(t){return!dn[t.id]&&t.s>nm})[0],h;
  if(cu)h='<small>En cours maintenant</small><div class="t">'+cu.n+'</div><small>jusqu’à '+HM(cu.s+cu.d)+'</small><div style="margin-top:12px"><button class="btn" data-a="go">Je suis dessus</button></div>';
  else if(nx)h='<small>Prochaine tâche, dans '+Math.floor((nx.s-nm)/60)+' h '+(nx.s-nm)%60+' min</small><div class="t">'+HM(nx.s)+' · '+nx.n+'</div><button class="btn" data-a="go">Je commence</button>';
  else h=M.length?'<div class="t">Journée terminée</div><small>Prépare ton sommeil.</small>':'<div class="t">Rien de prévu</div><small>Ajoute des tâches dans Planning.</small>';
  var mo=key.slice(0,7),gu=Object.keys(S.grace).filter(function(k){return k.slice(0,7)==mo}).length;
- var o='<div class="row"><div style="flex:1"><div class="mut">'+DN[wd(now)]+" "+now.getDate()+"/"+(now.getMonth()+1)+'</div><div style="font-size:20px;font-weight:700">Mon plan du jour</div></div>'+ring(p,84)+'</div><div class="mut">'+dc+" sur "+M.length+" tâches · objectif "+S.goal+" %</div><div class=\"hero\">"+h+"</div>";
+ var cd="";if(S.bac){var dd=Math.ceil((D0(S.bac)-now)/864e5);cd='<div class="card row sp"><span>🎓 Compte à rebours du Bac</span><b style="font-size:21px">'+(dd>0?"J-"+dd:dd==0?"C’est le jour":"Terminé")+'</b></div>'}var o=cd+'<div class="row"><div style="flex:1"><div class="mut">'+DN[wd(now)]+" "+now.getDate()+"/"+(now.getMonth()+1)+'</div><div style="font-size:20px;font-weight:700">'+(S.name?"Salut "+esc(S.name):"Mon plan du jour")+'</div></div>'+ring(p,84)+'</div><div class="mut">'+dc+" sur "+M.length+" tâches · objectif "+S.goal+" %</div><div class=\"hero\">"+h+"</div>";
  T.forEach(function(t){var d=dn[t.id],late=!d&&t.k!="f"&&nm>=t.s+t.d,nw=!d&&t.k!="f"&&nm>=t.s&&nm<t.s+t.d;
   o+='<div class="tl"><div class="tm">'+HM(t.s)+'</div><button class="tk '+t.k+(d?" d":"")+(nw?" now":"")+'" data-a="t" data-id="'+t.id+'"><span class="ck">'+(d?"✓":"")+'</span><span class="n">'+t.n+(t.k=="f"?" (facultatif)":"")+'<br><small>'+t.d+' min</small></span>'+(nw?'<span class="chip">maintenant</span>':late?'<span class="chip l">à rattraper</span>':"")+'</button></div>'});
- o+='<div class="row" style="margin-top:10px"><button class="btn b2" data-a="grace"'+(gu?" disabled":"")+'>Jour de grâce</button><span class="mut">'+(gu?"Utilisé ce mois-ci.":"1 par mois : ta série reste intacte.")+'</span></div>';return o}
+ o+='<div class="row" style="margin-top:10px"><button class="btn b2" data-a="grace"'+(gu>=S.gmax?" disabled":"")+'>Jour de grâce</button><span class="mut">'+(gu>=S.gmax?"Limite du mois atteinte.":S.gmax+" par mois : ta série reste intacte.")+'</span></div>';return o}
 function vPlan(){var di=S.pd,T=S.tpl[di].slice().sort(function(a,b){return a.s-b.s});
  var o='<div class="seg">';DN.forEach(function(n,i){o+='<button class="'+(i==di?"on":"")+'" data-a="pd" data-i="'+i+'">'+n+'</button>'});o+='</div>';
  T.forEach(function(t){o+='<div class="tl"><div class="tm">'+HM(t.s)+'</div><div class="tk '+t.k+'" style="cursor:default"><span class="n">'+t.n+'<br><small>'+t.d+' min</small></span><button class="x" data-a="del" data-id="'+t.id+'" aria-label="Supprimer">×</button></div></div>'});
@@ -133,17 +134,19 @@ function vStats(){var n=new Date();n.setHours(0,0,0,0);var f=[new Date(n),new Da
  if(!ks.length)o+='<span class="mut">Coche des tâches dans Aujourd’hui pour voir tes résultats.</span>';
  ks.forEach(function(k){var q=P.m[k],v=Math.round(q[0]/q[1]*100);o+='<div style="margin-bottom:9px"><div class="row sp"><span>'+k+'</span><b>'+v+' %</b></div><div class="bar"><i class="'+(v<S.goal?"m":"")+'" style="width:'+v+'%"></i></div></div>'});
  return o+'</div>'}
-function vMe(){var P=per(D0(S.start),new Date());
- return'<div class="card"><div class="row sp"><b>Objectif du jour</b><b id="gv">'+S.goal+' %</b></div><input id="goal" type="range" min="50" max="100" step="5" value="'+S.goal+'"></div>'+
- '<div class="card"><div class="row sp"><span>Série en cours</span><b>'+streak()+' jours</b></div></div>'+
- '<div class="card"><div class="mut" style="margin-bottom:6px">Début du suivi</div><input id="sd" type="date" value="'+S.start+'"></div>'+
- '<div class="row"><button class="btn" data-a="share">Partager mon bilan</button><button class="btn b2" data-a="theme">Thème '+(S.theme=="dark"?"clair":"sombre")+'</button></div>'+
- '<h2>Rappels</h2><div class="card"><div class="row sp"><span>Notifications</span><button class="btn b2" data-a="notif">'+(S.notif?"Désactiver":"Activer")+'</button></div><div class="row sp" style="margin-top:10px"><span>Prévenir avant</span><select id="lead" style="width:auto">'+[5,10,15,30].map(function(m){return"<option value=\""+m+"\""+(S.lead==m?" selected":"")+">"+m+" min</option>"}).join("")+'</select></div><div class="mut" style="margin-top:8px">Les notifications arrivent quand BacPlan est ouvert ou récemment utilisé. Pour des alarmes fiables, même téléphone verrouillé, exporte vers ton agenda.</div></div><div class="card"><div class="mut" style="margin-bottom:8px">Ton agenda reçoit toute ta semaine, avec une alarme avant chaque tâche.</div><button class="btn" data-a="ics">Exporter vers l’agenda</button></div><h2>Données</h2><div class="card mut">Tout reste sur ton téléphone, sans compte. Fais une sauvegarde de temps en temps.</div><div class="row"><button class="btn b2" data-a="bk">Sauvegarder</button><label class="btn b2" style="cursor:pointer">Restaurer<input id="rf" type="file" accept=".json" hidden></label></div><div style="margin-top:10px"><button class="btn b2" data-a="reset">'+(rst?"Confirmer : tout effacer":"Réinitialiser BacPlan")+'</button></div>'}
+function vOnb(){var O=[["sm","Sciences Maths"],["se","Sciences Expérimentales"],["ss","Sciences Sociales"],["pro","Adulte actif (travail, business)"],["vide","Planning vide"]];
+ return'<div style="font-size:24px;font-weight:800;margin:6px 0">Bienvenue sur BacPlan</div><div class="mut" style="margin-bottom:12px">Ton planning, ta série de jours, tes rappels. Tout reste sur ton téléphone.</div><div class="card"><input id="nm" placeholder="Ton prénom" value="'+esc(S.name)+'"><div class="mut" style="margin:10px 0 6px">Date du Bac (facultatif)</div><input id="bd" type="date" value="'+(S.bac||"")+'"></div><h2>Choisis un modèle de départ</h2>'+O.map(function(x){return'<button class="tk '+(PK==x[0]?"d":"w")+'" style="margin-bottom:7px" data-a="pick" data-s="'+x[0]+'"><span class="ck">'+(PK==x[0]?"✓":"")+'</span><span class="n">'+x[1]+'</span></button>'}).join("")+'<div class="mut" style="margin:6px 2px 12px">Ces modèles sont des points de départ : tu pourras tout modifier dans Planning.'+(S.chg?" Ton planning actuel sera remplacé : fais d’abord une sauvegarde.":"")+'</div><button class="btn" data-a="start">Commencer</button>'+(S.chg?' <button class="btn b2" data-a="canc">Annuler</button>':"")}
+function vMe(){var SR={sm:"Sciences Maths",se:"Sciences Expérimentales",ss:"Sciences Sociales",pro:"Adulte actif",vide:"Planning vide",perso:"Personnalisé"};
+ return'<h2>Profil</h2><div class="card"><input id="pn" placeholder="Ton prénom" value="'+esc(S.name)+'"><div class="mut" style="margin:10px 0 6px">Date du Bac (compte à rebours)</div><input id="bd" type="date" value="'+(S.bac||"")+'"><div class="mut" style="margin:10px 0 6px">Modèle actuel : '+(SR[S.serie]||"Personnalisé")+'</div><button class="btn b2" data-a="chg">Changer de modèle</button></div>'+
+ '<h2>Paramètres</h2><div class="card"><div class="row sp"><b>Objectif du jour</b><b id="gv">'+S.goal+' %</b></div><input id="goal" type="range" min="50" max="100" step="5" value="'+S.goal+'" style="padding:0;margin:6px 0"><div class="row sp" style="margin-top:8px"><span>Début du suivi</span><input id="sd" type="date" value="'+S.start+'" style="width:auto"></div><div class="row sp" style="margin-top:8px"><span>Jours de grâce par mois</span><select id="gm" style="width:auto">'+[1,2,3].map(function(m){return"<option"+(S.gmax==m?" selected":"")+">"+m+"</option>"}).join("")+'</select></div><div class="row sp" style="margin-top:8px"><span>Masquer les tâches facultatives</span><button class="btn b2" data-a="nof">'+(S.nof?"Oui":"Non")+'</button></div><div class="row sp" style="margin-top:8px"><span>Thème</span><button class="btn b2" data-a="theme">'+(S.theme=="dark"?"Sombre":"Clair")+'</button></div></div>'+
+ '<h2>Rappels</h2><div class="card"><div class="row sp"><span>Notifications</span><button class="btn b2" data-a="notif">'+(S.notif?"Désactiver":"Activer")+'</button></div><div class="row sp" style="margin-top:10px"><span>Prévenir avant</span><select id="lead" style="width:auto">'+[5,10,15,30].map(function(m){return"<option value=\""+m+"\""+(S.lead==m?" selected":"")+">"+m+" min</option>"}).join("")+'</select></div><div class="mut" style="margin-top:8px">Les notifications arrivent quand BacPlan est ouvert ou récemment utilisé. Pour des alarmes fiables, exporte vers ton agenda.</div><div style="margin-top:10px"><button class="btn" data-a="ics">Exporter vers l’agenda</button></div></div>'+
+ '<h2>Données</h2><div class="card mut">Tout reste sur ton téléphone, sans compte. Fais une sauvegarde de temps en temps.</div><div class="row"><button class="btn b2" data-a="bk">Sauvegarder</button><label class="btn b2" style="cursor:pointer">Restaurer<input id="rf" type="file" accept=".json" hidden></label><button class="btn b2" data-a="share">Mon bilan</button></div><div style="margin-top:10px"><button class="btn b2" data-a="reset">'+(rst?"Confirmer : tout effacer":"Réinitialiser BacPlan")+'</button></div>'+
+ '<h2>À propos</h2><div class="card"><b>BacPlan v'+VER+'</b><div class="mut" style="margin-top:6px">Un planning simple pour tenir ta routine, réviser au bon moment et suivre tes progrès. Gratuit, sans compte, sans publicité.</div></div><div class="card mut">Confidentialité : tes tâches, tes cases cochées et tes notes restent dans ton téléphone et ne sont envoyées à personne. Quand tu partages l’adresse de BacPlan, tes données ne sont pas partagées : chaque personne a son propre planning.</div><div class="row"><button class="btn" data-a="shareapp">Partager BacPlan</button><button class="btn b2" data-a="upd">Mettre à jour</button></div><div style="height:12px"></div>'}
 var IC=['<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>','<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>','<path d="M17 2l4 4-4 4M3 11V10a4 4 0 014-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 01-4 4H3"/>','<path d="M5 20V10M12 20V4M19 20v-7"/>','<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'];
 var LB=["Jour","Planning","Réviser","Bilans","Moi"];
 function render(top){var m=document.getElementById("main"),y=m.scrollTop;
- m.innerHTML=[vToday,vPlan,vRev,vStats,vMe][S.tab]();
- document.getElementById("nav").innerHTML=LB.map(function(l,i){return'<button class="'+(i==S.tab?"on":"")+'" data-a="tab" data-i="'+i+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+IC[i]+'</svg>'+l+'</button>'}).join("");
+ m.innerHTML=(S.onb?vOnb:[vToday,vPlan,vRev,vStats,vMe][S.tab])();
+ document.getElementById("nav").innerHTML=S.onb?"":LB.map(function(l,i){return'<button class="'+(i==S.tab?"on":"")+'" data-a="tab" data-i="'+i+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+IC[i]+'</svg>'+l+'</button>'}).join("");
  document.getElementById("fl").innerHTML="🔥 "+streak();m.scrollTop=top?0:y}
 document.addEventListener("click",function(e){var a=e.target.closest("[data-a]");if(!a||a.disabled)return;var x=a.dataset,k=K(new Date()),i=+x.i;
  switch(x.a){
@@ -163,16 +166,23 @@ document.addEventListener("click",function(e){var a=e.target.closest("[data-a]")
  case"notif":if(S.notif){S.notif=false;break}if(window.Notification){Notification.requestPermission().then(function(p){S.notif=p=="granted";save();render(false)})}return;
  case"ics":ics();return;
  case"bk":dl(JSON.stringify(S),"bacplan-sauvegarde.json","application/json");return;
+ case"pick":var a1=document.getElementById("nm"),b1=document.getElementById("bd");if(a1)S.name=a1.value;if(b1)S.bac=b1.value;PK=x.s;break;
+ case"start":S.name=document.getElementById("nm").value.trim();S.bac=document.getElementById("bd").value;applyT(PK);S.onb=0;S.chg=0;S.tab=0;S.pd=wd(new Date());break;
+ case"chg":S.onb=1;S.chg=1;break;
+ case"canc":S.onb=0;S.chg=0;break;
+ case"nof":S.nof=!S.nof;break;
+ case"upd":try{navigator.serviceWorker.getRegistration().then(function(r){if(r)r.update();location.reload()})}catch(er){location.reload()}return;
+ case"shareapp":var u=location.href.split("#")[0];try{if(navigator.share)navigator.share({title:"BacPlan",text:"BacPlan : mon appli de planning pour le Bac",url:u});else navigator.clipboard.writeText(u)}catch(er){}return;
  case"theme":S.theme=S.theme=="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",S.theme);break;
  case"share":var n2=new Date();n2.setHours(0,0,0,0);var w=new Date(n2);w.setDate(n2.getDate()-wd(n2));var A=per(w,n2),B=per(D0(S.start),n2);
   var tx="BacPlan : cette semaine "+(A.b?Math.round(A.a/A.b*100):0)+" %, depuis le début "+(B.b?Math.round(B.a/B.b*100):0)+" %, série de "+streak()+" jours.";
   try{if(navigator.share)navigator.share({text:tx});else navigator.clipboard.writeText(tx)}catch(er){}return;
  case"reset":if(!rst){rst=true;break}try{localStorage.removeItem(KEY)}catch(er){}rst=false;load();break;}
  save();render(false)});
-document.addEventListener("input",function(e){if(e.target.id=="goal"){S.goal=+e.target.value;document.getElementById("gv").textContent=S.goal+" %";save()}});
+document.addEventListener("input",function(e){if(e.target.id=="pn"){S.name=e.target.value;save()}if(e.target.id=="goal"){S.goal=+e.target.value;document.getElementById("gv").textContent=S.goal+" %";save()}});
 document.addEventListener("change",function(e){var t=e.target;
  if(t.id=="sd"&&t.value){S.start=t.value;save();render(false)}
- if(t.id=="lead"){S.lead=+t.value;save()}
+ if(t.id=="lead"){S.lead=+t.value;save()}if(t.id=="bd"&&!S.onb){S.bac=t.value;save();render(false)}if(t.id=="gm"){S.gmax=+t.value;save();render(false)}
  if(t.id=="rf"&&t.files[0]){var fr=new FileReader();fr.onload=function(){try{var o=JSON.parse(fr.result);if(o&&o.tpl){S=o;save();render(true)}}catch(er){}};fr.readAsText(t.files[0])}});
 var sent={};
 function dl(txt,name,type){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
